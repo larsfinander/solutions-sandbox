@@ -545,7 +545,11 @@ function getSmartAppPath(event, context, resultCallback) {
                     // No endpoints found but token was valid, this most likely means that the SmartApp has been uninstalled
                     // Would it make more sense to send INTERNAL_ERROR?
                     log("getSmartAppPath", "SmartApp might have been uninstalled");
+                    if (resultCallback == handleCustomSkill) {
+                        sendCustomSkillErrorResponse(context, event, INTERNAL_ERROR, "SmartApp has been uninstalled, please disable and renable the SmartThings skill from the Alexa Skills Marketplace");
+                    } else {
                     sendErrorResponseV1(context, event, INVALID_ACCESS_TOKEN, "SmartApp has been uninstalled, user should relink with SmartThings");
+                    }
                 } else {
                     log("getSmartAppPath", "Unexpected response");
                     sendErrorResponseV1(context, event, INTERNAL_ERROR, "Unexpected response received while identifying SmartApp");
@@ -647,7 +651,7 @@ function sendErrorResponseV2(context, event, error, payload, namespace, name) {
 }
 
 
-function sendCustomSkillErrorResponse(context, event, errorCode, errorDescription, namespace, name) {
+function sendCustomSkillErrorResponse(context, event, errorCode, errorDescription) {
     var cardTitle = "SmartThings Error: " + errorCode;
     // Setting this to true ends the session and exits the skill.
     var shouldEndSession = true;
